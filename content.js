@@ -176,6 +176,11 @@
             <button class="mcr-bg-swatch" data-theme="dark" title="Dark"
               style="background:#1a1a1a;border-color:rgba(255,255,255,0.35);"></button>
           </div>
+          <div class="mcr-control-group">
+            <span class="mcr-label">Style</span>
+            <button class="mcr-col-btn mcr-style-btn active" data-style="flat">Flat</button>
+            <button class="mcr-col-btn mcr-style-btn" data-style="aero">Aero</button>
+          </div>
           <button id="mcr-close">✕ Close</button>
         </div>
         <div id="mcr-scroll">
@@ -209,14 +214,25 @@
       applySize(shadow, state.size);
     });
 
-    shadow.querySelectorAll(".mcr-col-btn").forEach((btn) => {
+    shadow.querySelectorAll(".mcr-col-btn:not(.mcr-style-btn)").forEach((btn) => {
       if (parseInt(btn.dataset.colWidth, 10) === state.colWidth) btn.classList.add("active");
       else btn.classList.remove("active");
       btn.addEventListener("click", () => {
-        shadow.querySelectorAll(".mcr-col-btn").forEach((b) => b.classList.remove("active"));
+        shadow.querySelectorAll(".mcr-col-btn:not(.mcr-style-btn)").forEach((b) => b.classList.remove("active"));
         btn.classList.add("active");
         state.colWidth = parseInt(btn.dataset.colWidth, 10);
         applyColumnWidth(shadow, state.colWidth);
+      });
+    });
+
+    shadow.querySelectorAll(".mcr-style-btn").forEach((btn) => {
+      if (btn.dataset.style === state.style) btn.classList.add("active");
+      else btn.classList.remove("active");
+      btn.addEventListener("click", () => {
+        shadow.querySelectorAll(".mcr-style-btn").forEach((b) => b.classList.remove("active"));
+        btn.classList.add("active");
+        state.style = btn.dataset.style;
+        applyStyle(shadow, state.style);
       });
     });
 
@@ -245,6 +261,10 @@
 
   function applyColumnWidth(shadow, px) {
     shadow.getElementById("mcr-overlay").style.setProperty("--mcr-col-width", px + "px");
+  }
+
+  function applyStyle(shadow, styleName) {
+    shadow.getElementById("mcr-overlay").dataset.style = styleName;
   }
 
   function applyTheme(shadow, themeName) {
@@ -308,9 +328,10 @@
       shadowRoot.getElementById("mcr-article").replaceChild(noArticle, bodyEl);
     }
 
-    const state = { font: "georgia", size: 18, colWidth: 400, theme: "white" };
+    const state = { font: "georgia", size: 18, colWidth: 400, theme: "white", style: "flat" };
     applyTheme(shadowRoot, state.theme);
     applyColumnWidth(shadowRoot, state.colWidth);
+    applyStyle(shadowRoot, state.style);
     buildControls(shadowRoot, state);
 
     // Hide original page entirely — no blur, no scrollbar bleed-through

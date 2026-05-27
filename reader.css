@@ -53,6 +53,8 @@ body.mcr-active > *:not(#mcr-host) {
   background: var(--mcr-bg, #ffffff);
   border-bottom: 1px solid var(--mcr-border, rgba(0, 0, 0, 0.1));
   flex-wrap: wrap;
+  position: relative;
+  overflow: hidden;
 }
 
 .mcr-control-group {
@@ -315,4 +317,91 @@ body.mcr-active > *:not(#mcr-host) {
 #mcr-overlay[data-theme="sepia"] #mcr-controls {
   --mcr-controls-bg: #f5f0e8;
   --mcr-border: rgba(0, 0, 0, 0.12);
+}
+
+/* ── Style buttons (share .mcr-col-btn base; :first/:last-of-type handles radius) ── */
+.mcr-style-btn:first-of-type { border-radius: 5px 0 0 5px; }
+.mcr-style-btn:last-of-type  { border-radius: 0 5px 5px 0; border-left: none; }
+
+/* ── Aero Glass style ── */
+#mcr-overlay[data-style="aero"] #mcr-controls {
+  background: linear-gradient(
+    180deg,
+    rgba(210, 232, 255, 0.97) 0%,
+    rgba(160, 200, 248, 0.95) 48%,
+    rgba(140, 185, 242, 0.97) 52%,
+    rgba(180, 215, 252, 0.95) 100%
+  );
+  border-bottom: 1px solid rgba(80, 140, 215, 0.5);
+  box-shadow:
+    0 3px 12px rgba(60, 120, 210, 0.22),
+    inset 0 1px 0 rgba(255, 255, 255, 0.82),
+    inset 0 -1px 0 rgba(100, 160, 235, 0.3);
+}
+
+/* Shimmer sweep — the fun element */
+#mcr-overlay[data-style="aero"] #mcr-controls::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -70%;
+  width: 50%;
+  height: 55%;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(255, 255, 255, 0.45) 50%,
+    transparent 100%
+  );
+  animation: mcr-aero-shimmer 6s ease-in-out infinite;
+  pointer-events: none;
+}
+
+@keyframes mcr-aero-shimmer {
+  0%   { left: -70%; opacity: 0; }
+  10%  { opacity: 1; }
+  45%  { left: 120%; opacity: 1; }
+  55%  { left: 120%; opacity: 0; }
+  100% { left: 120%; opacity: 0; }
+}
+
+#mcr-overlay[data-style="aero"] .mcr-col-btn,
+#mcr-overlay[data-style="aero"] #mcr-font-select,
+#mcr-overlay[data-style="aero"] #mcr-close {
+  background: linear-gradient(180deg,
+    rgba(225, 242, 255, 0.92) 0%,
+    rgba(185, 218, 252, 0.88) 100%);
+  border: 1px solid rgba(80, 140, 215, 0.5);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.75),
+    0 1px 3px rgba(60, 120, 210, 0.18);
+  color: #00307a;
+  text-shadow: 0 1px 0 rgba(255, 255, 255, 0.65);
+}
+
+#mcr-overlay[data-style="aero"] .mcr-col-btn.active {
+  background: linear-gradient(180deg,
+    rgba(70, 130, 220, 0.92) 0%,
+    rgba(40, 100, 195, 0.9) 100%);
+  border-color: rgba(20, 60, 155, 0.6);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.28),
+    inset 0 -1px 4px rgba(0, 0, 0, 0.18),
+    0 0 10px rgba(80, 145, 255, 0.45);
+  color: #ffffff;
+  text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.28);
+}
+
+#mcr-overlay[data-style="aero"] #mcr-close:hover {
+  background: linear-gradient(180deg,
+    rgba(255, 220, 220, 0.92) 0%,
+    rgba(242, 185, 185, 0.88) 100%);
+  border-color: rgba(200, 80, 80, 0.5);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.65),
+    0 0 8px rgba(220, 80, 80, 0.3);
+}
+
+#mcr-overlay[data-style="aero"] #mcr-size-slider {
+  accent-color: #3a7bd5;
 }

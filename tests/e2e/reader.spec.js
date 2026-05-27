@@ -304,3 +304,16 @@ test("16 — no-article page shows fallback message", async () => {
   });
   expect(noArticleText).toContain("No article found");
 });
+
+test("17 — Aero style sets data-style attribute on overlay", async () => {
+  await triggerActivate(page);
+  await page.evaluate(() => {
+    const host = document.getElementById("mcr-host");
+    host.shadowRoot.querySelector('[data-style="aero"]').click();
+  });
+  const style = await page.evaluate(() => {
+    const host = document.getElementById("mcr-host");
+    return host.shadowRoot.getElementById("mcr-overlay").dataset.style;
+  });
+  expect(style).toBe("aero");
+});
