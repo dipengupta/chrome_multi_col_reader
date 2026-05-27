@@ -1,0 +1,318 @@
+/* ── Page takeover (main document, outside Shadow DOM) ── */
+
+/* Hide ALL original page content and both scrollbars */
+html.mcr-active,
+body.mcr-active {
+  overflow: hidden !important;
+}
+
+body.mcr-active > *:not(#mcr-host) {
+  display: none !important;
+}
+
+#mcr-host {
+  position: fixed;
+  inset: 0;
+  z-index: 2147483647;
+}
+
+/* ── Shadow DOM scope ── */
+
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+#mcr-overlay {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  background: var(--mcr-bg, #ffffff);
+  color: var(--mcr-color, #1a1a1a);
+  font-family: var(--mcr-font, Georgia, 'Times New Roman', serif);
+  font-size: var(--mcr-size, 18px);
+  line-height: 1.75;
+  animation: mcr-fade-in 0.15s ease;
+}
+
+@keyframes mcr-fade-in {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+/* ── Controls bar — fixed flex item, never scrolls ── */
+#mcr-controls {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
+  padding: 0.65rem 2rem;
+  background: var(--mcr-bg, #ffffff);
+  border-bottom: 1px solid var(--mcr-border, rgba(0, 0, 0, 0.1));
+  flex-wrap: wrap;
+}
+
+.mcr-control-group {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.mcr-label {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--mcr-label-color, #888);
+  white-space: nowrap;
+}
+
+#mcr-font-select {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  font-size: 13px;
+  padding: 0.3rem 0.5rem;
+  border: 1px solid var(--mcr-border, rgba(0,0,0,0.2));
+  border-radius: 5px;
+  background: var(--mcr-input-bg, #fff);
+  color: var(--mcr-color, #1a1a1a);
+  cursor: pointer;
+}
+
+#mcr-size-slider {
+  width: 90px;
+  accent-color: #e05c2a;
+  cursor: pointer;
+}
+
+#mcr-size-label {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  font-size: 12px;
+  color: var(--mcr-label-color, #888);
+  min-width: 30px;
+  text-align: right;
+}
+
+.mcr-col-btn {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  font-size: 13px;
+  padding: 0.3rem 0.75rem;
+  border: 1px solid var(--mcr-border, rgba(0,0,0,0.2));
+  background: var(--mcr-input-bg, #fff);
+  color: var(--mcr-color, #1a1a1a);
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s;
+}
+
+.mcr-col-btn:first-of-type { border-radius: 5px 0 0 5px; }
+.mcr-col-btn:last-of-type  { border-radius: 0 5px 5px 0; border-left: none; }
+
+.mcr-col-btn.active {
+  background: #e05c2a;
+  color: #fff;
+  border-color: #e05c2a;
+}
+
+.mcr-bg-swatch {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  border: 2px solid transparent;
+  cursor: pointer;
+  transition: border-color 0.15s, transform 0.15s;
+  outline: none;
+}
+
+.mcr-bg-swatch:hover  { transform: scale(1.15); }
+.mcr-bg-swatch.active { border-color: #e05c2a !important; }
+
+#mcr-close {
+  margin-left: auto;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  font-size: 13px;
+  font-weight: 600;
+  padding: 0.35rem 0.9rem;
+  background: transparent;
+  border: 1px solid var(--mcr-border, rgba(0,0,0,0.2));
+  border-radius: 5px;
+  color: var(--mcr-color, #1a1a1a);
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+#mcr-close:hover { background: rgba(224, 92, 42, 0.1); }
+
+/* ── Scrollable content area (horizontal newspaper spread) ── */
+#mcr-scroll {
+  flex: 1;
+  overflow-x: auto;
+  overflow-y: hidden;
+  display: flex;
+  align-items: stretch;
+}
+
+#mcr-article {
+  display: flex;
+  flex-direction: column;
+  min-width: 100%;
+  flex: 1;
+  padding: 1.25rem 2rem;
+}
+
+/* ── Article header: hero image beside title ── */
+#mcr-article-header {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  flex-shrink: 0;
+  margin-bottom: 1.25rem;
+  padding-bottom: 1rem;
+  border-bottom: 2px solid var(--mcr-border, rgba(0,0,0,0.1));
+}
+
+/* ── Hero image ── */
+#mcr-hero {
+  flex-shrink: 0;
+}
+
+#mcr-hero-img {
+  height: 160px;
+  width: auto;
+  max-width: 260px;
+  object-fit: cover;
+  border-radius: 6px;
+  display: block;
+}
+
+/* ── Article title ── */
+#mcr-title {
+  flex: 1;
+  font-family: var(--mcr-font, Georgia, 'Times New Roman', serif);
+  font-size: calc(var(--mcr-size, 18px) * 1.6);
+  font-weight: 700;
+  line-height: 1.25;
+}
+
+/* ── Multi-column body ── */
+
+/* The Verge wraps each block in its own div — make those layout-transparent */
+#mcr-body > div {
+  display: contents;
+}
+
+#mcr-body {
+  flex: 1;
+  min-height: 0;
+  column-width: var(--mcr-col-width, 400px);
+  column-gap: 2.75rem;
+  column-rule: 1px solid var(--mcr-border, rgba(0,0,0,0.1));
+  overflow: visible;
+}
+
+#mcr-body p {
+  margin-bottom: 1em;
+  orphans: 3;
+  widows: 3;
+}
+
+#mcr-body h2,
+#mcr-body h3,
+#mcr-body h4 {
+  font-size: calc(var(--mcr-size, 18px) * 1.15);
+  font-weight: 700;
+  margin-top: 1.4em;
+  margin-bottom: 0.5em;
+  break-inside: avoid;
+  break-after: avoid;
+}
+
+#mcr-body blockquote {
+  margin: 1.2em 0;
+  padding: 0.75em 1.25em;
+  border-left: 3px solid #e05c2a;
+  font-style: italic;
+  opacity: 0.85;
+  break-inside: avoid;
+}
+
+#mcr-body ul,
+#mcr-body ol {
+  margin: 0.8em 0 0.8em 1.5em;
+  break-inside: avoid;
+}
+
+#mcr-body li { margin-bottom: 0.3em; }
+
+#mcr-body a {
+  color: #e05c2a;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+/* ── Images ── */
+#mcr-body img {
+  /* Inline styles are reset by processImages() in JS */
+  max-width: 100%;
+  width: auto;
+  max-height: 280px;
+  height: auto;
+  display: block;
+  margin: 1em auto;
+  break-inside: avoid;
+  border-radius: 4px;
+}
+
+#mcr-body figure {
+  break-inside: avoid;
+  margin: 1.2em 0;
+}
+
+#mcr-body figcaption {
+  font-size: 0.82em;
+  opacity: 0.65;
+  margin-top: 0.4em;
+  font-style: italic;
+  text-align: center;
+}
+
+#mcr-body video,
+#mcr-body iframe,
+#mcr-body svg {
+  display: none;
+}
+
+/* ── No article message ── */
+#mcr-no-article {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 60vh;
+  gap: 1rem;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  color: var(--mcr-label-color, #888);
+  text-align: center;
+}
+
+#mcr-no-article h2 {
+  font-size: 1.4rem;
+  font-weight: 600;
+  color: var(--mcr-color, #1a1a1a);
+}
+
+/* ── Dark theme ── */
+#mcr-overlay[data-theme="dark"] #mcr-controls {
+  --mcr-controls-bg: #1a1a1a;
+  --mcr-border: rgba(255, 255, 255, 0.12);
+  --mcr-input-bg: #2a2a2a;
+  --mcr-label-color: #999;
+}
+
+/* ── Sepia theme ── */
+#mcr-overlay[data-theme="sepia"] #mcr-controls {
+  --mcr-controls-bg: #f5f0e8;
+  --mcr-border: rgba(0, 0, 0, 0.12);
+}
